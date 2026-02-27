@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --panel: #111318;
+    --border: #1e2230;
+    --accent1: #e8f04a; /* yellow-green — service failure */
+    --accent2: #4af0c8; /* teal — absence */
+    --red: #ff4c4c;
+    --orange: #ff9340;
+    --dim: #3a3f52;
+    --text: #dde3f5;
+    --muted: #6b7494;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 48px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+    color: #fff;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .timestamp {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* ── MAIN GRID ── */
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    overflow: hidden;
+  }
+
+  /* ── LEFT AXIS: LOCATION NAMES ── */
+  .loc-axis {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 0 24px;
+    border-right: 1px solid var(--border);
+  }
+
+  .day-label-spacer {
+    height: 42px;
+    flex-shrink: 0;
+  }
+
+  .loc-rows {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .loc-label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .loc-label:last-child { border-bottom: none; }
+
+  .loc-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .loc-avg {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .loc-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
+
+  .badge-good { background: rgba(74,240,200,0.12); color: var(--accent2); }
+  .badge-warn { background: rgba(255,147,64,0.12); color: var(--orange); }
+  .badge-alert { background: rgba(255,76,76,0.12); color: var(--red); }
+
+  /* ── CHART AREA ── */
+  .chart-area {
+    display: flex;
+    flex-direction: column;
+    padding: 0 32px 12px 32px;
+  }
+
+  /* ── DAY HEADERS ── */
+  .day-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    height: 42px;
+    flex-shrink: 0;
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .day-header:last-child { border-right: none; }
+  .day-header.today { color: var(--accent1); }
+
+  /* ── LOC ROWS ── */
+  .chart-rows {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-row {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chart-row:last-child { border-bottom: none; }
+
+  /* ── CELL ── */
+  .cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .cell:last-child { border-right: none; }
+  .cell.today-col { background: rgba(232,240,74,0.025); }
+
+  /* ── BAR PAIR ── */
+  .bar-pair {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 64px;
+  }
+
+  .bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 28px;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 2px 2px 0 0;
+    transition: height 0.3s;
+    position: relative;
+  }
+
+  .bar-sf { background: var(--accent1); }
+  .bar-ab { background: var(--accent2); }
+
+  .bar.warn { background: var(--orange); }
+  .bar.alert { background: var(--red); }
+
+  .bar-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .bar-val.sf-val { color: var(--accent1); }
+  .bar-val.ab-val { color: var(--accent2); }
+  .bar-val.warn-val { color: var(--orange); }
+  .bar-val.alert-val { color: var(--red); }
+
+  .bar-label {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    color: var(--dim);
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    height: 36px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    flex-shrink: 0;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .threshold-note {
+    display: flex;
+    gap: 24px;
+  }
+
+  .thresh {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  .thresh span { margin-right: 6px; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title">Location Performance Monitor</div>
+    <div class="subtitle">Service Failure & Employee Absence — Week of Feb 24, 2026</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--accent1)"></div>
+      Service Failure Rate
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--accent2)"></div>
+      Employee Absence Rate
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--orange)"></div>
+      Elevated (&gt;10%)
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--red)"></div>
+      Critical (&gt;18%)
+    </div>
+  </div>
+  <div class="timestamp">
+    UPDATED<br>FRI 27 FEB · 14:32
+  </div>
+</header>
+
+<div class="main" id="dashboard"></div>
+
+<footer>
+  <div class="footer-note">All rates shown as percentage of total daily volume · Bars scaled to max 25%</div>
+  <div class="threshold-note">
+    <div class="thresh"><span style="color:var(--accent1)">■</span> SF Normal &lt;10%</div>
+    <div class="thresh"><span style="color:var(--accent2)">■</span> AB Normal &lt;10%</div>
+    <div class="thresh"><span style="color:var(--orange)">■</span> Elevated 10–18%</div>
+    <div class="thresh"><span style="color:var(--red)">■</span> Critical &gt;18%</div>
+  </div>
+</footer>
+
+<script>
+const locations = [
+  { name: "North Plaza",    short: "NP" },
+  { name: "East Harbor",   short: "EH" },
+  { name: "West Ridge",    short: "WR" },
+  { name: "Central Hub",   short: "CH" },
+  { name: "South Gate",    short: "SG" },
+  { name: "Riverside",     short: "RV" },
+  { name: "Uptown",        short: "UT" },
+];
+
+const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+const todayIdx = 4; // Friday
+
+// [service_failure%, absence%] per location per day
+const data = [
+  // NP
+  [[6,5],[8,7],[5,6],[7,8],[9,6],[12,9],[7,5]],
+  // EH
+  [[11,8],[14,10],[20,12],[18,9],[22,14],[8,7],[6,5]],
+  // WR
+  [[5,4],[6,5],[5,4],[7,6],[6,5],[5,4],[4,3]],
+  // CH
+  [[9,7],[10,8],[8,7],[11,9],[13,10],[15,12],[10,8]],
+  // SG
+  [[7,6],[8,7],[19,15],[21,18],[16,13],[9,8],[7,6]],
+  // RV
+  [[6,5],[7,6],[8,7],[7,6],[6,5],[5,4],[5,4]],
+  // UT
+  [[13,10],[11,9],[10,8],[12,11],[14,12],[17,14],[11,9]],
+];
+
+const MAX_RATE = 25; // scale max
+const BAR_MAX_PX = 64;
+
+function getColor(val, type) {
+  if (val > 18) return 'alert';
+  if (val > 10) return 'warn';
+  return type === 'sf' ? '' : '';
+}
+
+function getColorClass(val) {
+  if (val > 18) return 'alert-val';
+  if (val > 10) return 'warn-val';
+  return '';
+}
+
+function getBarColorClass(val, base) {
+  if (val > 18) return 'alert';
+  if (val > 10) return 'warn';
+  return base;
+}
+
+function avgPair(locData) {
+  let sf = 0, ab = 0;
+  locData.forEach(([s, a]) => { sf += s; ab += a; });
+  return [+(sf/7).toFixed(1), +(ab/7).toFixed(1)];
+}
+
+function getBadge(sf, ab) {
+  if (sf > 14 || ab > 14) return ['badge-alert', 'Critical'];
+  if (sf > 9 || ab > 9)   return ['badge-warn',  'Elevated'];
+  return ['badge-good', 'On Track'];
+}
+
+const dash = document.getElementById('dashboard');
+
+// Left axis
+const locAxis = document.createElement('div');
+locAxis.className = 'loc-axis';
+const spacer = document.createElement('div');
+spacer.className = 'day-label-spacer';
+locAxis.appendChild(spacer);
+
+const locRows = document.createElement('div');
+locRows.className = 'loc-rows';
+
+locations.forEach((loc, li) => {
+  const [avgSF, avgAB] = avgPair(data[li]);
+  const [badgeClass, badgeText] = getBadge(avgSF, avgAB);
+  const el = document.createElement('div');
+  el.className = 'loc-label';
+  el.innerHTML = `
+    <div class="loc-name">${loc.name}</div>
+    <div class="loc-avg">SF avg ${avgSF}% · AB avg ${avgAB}%</div>
+    <div class="loc-badge ${badgeClass}">${badgeText}</div>
+  `;
+  locRows.appendChild(el);
+});
+
+locAxis.appendChild(locRows);
+dash.appendChild(locAxis);
+
+// Chart area
+const chartArea = document.createElement('div');
+chartArea.className = 'chart-area';
+
+// Day headers
+const dayHeaders = document.createElement('div');
+dayHeaders.className = 'day-headers';
+days.forEach((d, i) => {
+  const dh = document.createElement('div');
+  dh.className = 'day-header' + (i === todayIdx ? ' today' : '');
+  dh.textContent = d + (i === todayIdx ? ' ★' : '');
+  dayHeaders.appendChild(dh);
+});
+chartArea.appendChild(dayHeaders);
+
+// Chart rows
+const chartRowsEl = document.createElement('div');
+chartRowsEl.className = 'chart-rows';
+
+locations.forEach((loc, li) => {
+  const row = document.createElement('div');
+  row.className = 'chart-row';
+
+  days.forEach((_, di) => {
+    const [sf, ab] = data[li][di];
+    const sfH = Math.round((sf / MAX_RATE) * BAR_MAX_PX);
+    const abH = Math.round((ab / MAX_RATE) * BAR_MAX_PX);
+    const sfBarClass = getBarColorClass(sf, 'bar-sf');
+    const abBarClass = getBarColorClass(ab, 'bar-ab');
+    const sfValClass = sf > 18 ? 'alert-val' : sf > 10 ? 'warn-val' : 'sf-val';
+    const abValClass = ab > 18 ? 'alert-val' : ab > 10 ? 'warn-val' : 'ab-val';
+
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (di === todayIdx ? ' today-col' : '');
+    cell.innerHTML = `
+      <div class="bar-pair">
+        <div class="bar-wrap">
+          <div class="bar-val ${sfValClass}">${sf}%</div>
+          <div class="bar bar-sf ${sfBarClass}" style="height:${sfH}px"></div>
+          <div class="bar-label">SF</div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-val ${abValClass}">${ab}%</div>
+          <div class="bar bar-ab ${abBarClass}" style="height:${abH}px"></div>
+          <div class="bar-label">AB</div>
+        </div>
+      </div>
+    `;
+    row.appendChild(cell);
+  });
+
+  chartRowsEl.appendChild(row);
+});
+
+chartArea.appendChild(chartRowsEl);
+dash.appendChild(chartArea);
+</script>
+</body>
+</html>
