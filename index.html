@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,11 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f6fb;
+    --bg: #f0f3fa;
     --panel: #ffffff;
     --border: #dde2ef;
-    --accent1: #2563eb; /* blue — service failure */
-    --accent2: #059669; /* green — absence */
+    --accent1: #2563eb;
+    --accent2: #059669;
     --red: #dc2626;
     --orange: #ea7c1e;
     --dim: #a0a9c2;
@@ -19,293 +20,313 @@
     --muted: #6b7494;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+- { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+width: 1920px;
+height: 1080px;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+}
 
-  /* ── HEADER ── */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 22px 48px 16px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    background: #ffffff;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
+/* ── HEADER ── */
+header {
+height: 90px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 48px;
+border-bottom: 2px solid var(–border);
+flex-shrink: 0;
+background: #ffffff;
+box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
 
-  .title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
-    letter-spacing: 3px;
-    color: var(--text);
-  }
+.title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 40px;
+letter-spacing: 3px;
+color: var(–text);
+line-height: 1;
+}
 
-  .subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
+.subtitle {
+font-size: 12px;
+color: var(–muted);
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-top: 4px;
+}
 
-  .legend {
-    display: flex;
-    gap: 32px;
-    align-items: center;
-  }
+.legend {
+display: flex;
+gap: 24px;
+align-items: center;
+}
 
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+.legend-item {
+display: flex;
+align-items: center;
+gap: 7px;
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.8px;
+text-transform: uppercase;
+}
 
-  .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-  }
+.legend-dot {
+width: 10px;
+height: 10px;
+border-radius: 2px;
+flex-shrink: 0;
+}
 
-  .timestamp {
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    color: var(--muted);
-    text-align: right;
-  }
+.timestamp {
+font-family: ‘DM Mono’, monospace;
+font-size: 12px;
+color: var(–muted);
+text-align: right;
+line-height: 1.6;
+}
 
-  /* ── MAIN GRID ── */
-  .main {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    overflow: hidden;
-  }
+/* ── MAIN ── */
+.main {
+flex: 1;
+display: grid;
+grid-template-columns: 220px 1fr;
+overflow: hidden;
+}
 
-  /* ── LEFT AXIS: LOCATION NAMES ── */
-  .loc-axis {
-    display: flex;
-    flex-direction: column;
-    padding: 0 0 0 24px;
-    border-right: 1px solid var(--border);
-    background: #ffffff;
-  }
+/* ── LEFT AXIS ── */
+.loc-axis {
+display: flex;
+flex-direction: column;
+border-right: 2px solid var(–border);
+background: #ffffff;
+box-shadow: 2px 0 6px rgba(0,0,0,0.04);
+}
 
-  .day-label-spacer {
-    height: 42px;
-    flex-shrink: 0;
-  }
+.day-label-spacer {
+height: 44px;
+flex-shrink: 0;
+border-bottom: 1px solid var(–border);
+}
 
-  .loc-rows {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+.loc-rows {
+flex: 1;
+display: flex;
+flex-direction: column;
+}
 
-  .loc-label {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-right: 20px;
-    border-bottom: 1px solid var(--border);
-  }
+.loc-label {
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 0 16px 0 20px;
+border-bottom: 1px solid var(–border);
+}
+.loc-label:last-child { border-bottom: none; }
 
-  .loc-label:last-child { border-bottom: none; }
+.loc-name {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 20px;
+letter-spacing: 1.5px;
+color: var(–text);
+line-height: 1;
+}
 
-  .loc-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 1.5px;
-    color: var(--text);
-    line-height: 1;
-  }
+.loc-avg {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+margin-top: 3px;
+letter-spacing: 0.3px;
+}
+.dt-avg { color: var(–accent1); }
+.ab-avg { color: var(–accent2); }
 
-  .loc-avg {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-    letter-spacing: 0.5px;
-  }
-  .dt-avg { color: var(--accent1); }
-  .ab-avg { color: var(--accent2); }
+.loc-badge {
+display: inline-block;
+font-size: 9px;
+font-family: ‘DM Mono’, monospace;
+letter-spacing: 1px;
+padding: 2px 5px;
+border-radius: 2px;
+margin-top: 4px;
+text-transform: uppercase;
+width: fit-content;
+}
+.badge-good  { background: rgba(5,150,105,0.10);  color: var(–accent2); }
+.badge-warn  { background: rgba(234,124,30,0.12);  color: var(–orange); }
+.badge-alert { background: rgba(220,38,38,0.10);   color: var(–red); }
 
-  .loc-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    border-radius: 2px;
-    margin-top: 5px;
-    text-transform: uppercase;
-  }
+/* ── CHART AREA ── */
+.chart-area {
+display: flex;
+flex-direction: column;
+padding: 0 24px 0 24px;
+}
 
-  .badge-good { background: rgba(5,150,105,0.10); color: var(--accent2); }
-  .badge-warn { background: rgba(234,124,30,0.12); color: var(--orange); }
-  .badge-alert { background: rgba(220,38,38,0.10); color: var(--red); }
+/* ── DAY HEADERS ── */
+.day-headers {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+height: 44px;
+flex-shrink: 0;
+}
 
-  /* ── CHART AREA ── */
-  .chart-area {
-    display: flex;
-    flex-direction: column;
-    padding: 0 32px 12px 32px;
-  }
+.day-header {
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 20px;
+letter-spacing: 2.5px;
+color: var(–muted);
+border-bottom: 1px solid var(–border);
+border-right: 1px solid var(–border);
+gap: 6px;
+}
+.day-header:last-child { border-right: none; }
+.day-header.best-day   { color: var(–accent2); }
+.day-header.worst-day  { color: var(–red); }
+.face { font-size: 18px; line-height: 1; }
 
-  /* ── DAY HEADERS ── */
-  .day-headers {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    height: 42px;
-    flex-shrink: 0;
-  }
+/* ── CHART ROWS ── */
+.chart-rows {
+flex: 1;
+display: flex;
+flex-direction: column;
+}
 
-  .day-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-  }
+.chart-row {
+flex: 1;
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+border-bottom: 1px solid var(–border);
+}
+.chart-row:last-child { border-bottom: none; }
 
-  .day-header:last-child { border-right: none; }
-  .day-header.today { color: var(--accent1); }
-  .day-header.best-day  { color: var(--accent2); }
-  .day-header.worst-day { color: var(--red); }
+/* ── CELL ── */
+.cell {
+display: flex;
+flex-direction: column;
+justify-content: center;
+gap: 8px;
+padding: 10px 16px;
+border-right: 1px solid var(–border);
+}
+.cell:last-child { border-right: none; }
+.cell.best-col  { background: rgba(5,150,105,0.04); }
+.cell.worst-col { background: rgba(220,38,38,0.04); }
 
-  /* ── LOC ROWS ── */
-  .chart-rows {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
+/* ── HORIZONTAL BAR ROW ── */
+.hbar-row {
+display: flex;
+align-items: center;
+gap: 8px;
+}
 
-  .chart-row {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border-bottom: 1px solid var(--border);
-  }
+.hbar-label {
+font-family: ‘DM Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.5px;
+color: var(–dim);
+text-transform: uppercase;
+width: 16px;
+flex-shrink: 0;
+text-align: right;
+}
 
-  .chart-row:last-child { border-bottom: none; }
+.hbar-track {
+flex: 1;
+height: 22px;
+background: #e8ecf5;
+border-radius: 3px;
+position: relative;
+overflow: visible;
+}
 
-  /* ── CELL ── */
-  .cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px 8px;
-    border-right: 1px solid var(--border);
-    position: relative;
-  }
+.hbar-fill {
+height: 100%;
+border-radius: 3px;
+position: absolute;
+left: 0;
+top: 0;
+display: flex;
+align-items: center;
+min-width: 4px;
+overflow: hidden;
+}
 
-  .cell:last-child { border-right: none; }
-  .cell.best-col  { background: rgba(5,150,105,0.05); }
-  .cell.worst-col { background: rgba(220,38,38,0.05); }
+.hbar-val-inside {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+font-weight: 500;
+padding-left: 7px;
+white-space: nowrap;
+color: #fff;
+line-height: 1;
+}
 
-  /* ── BAR PAIR ── */
-  .bar-pair {
-    display: flex;
-    align-items: flex-end;
-    gap: 5px;
-    height: 64px;
-  }
+.hbar-val-outside {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+font-weight: 500;
+padding-left: 6px;
+white-space: nowrap;
+line-height: 1;
+flex-shrink: 0;
+}
 
-  .bar-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    width: 28px;
-  }
+/* fill colors */
+.fill-dt-good   { background: var(–accent1); }
+.fill-dt-warn   { background: var(–orange); }
+.fill-dt-alert  { background: var(–red); }
+.fill-ab-good   { background: var(–accent2); }
+.fill-ab-warn   { background: var(–orange); }
+.fill-ab-alert  { background: var(–red); }
 
-  .bar {
-    width: 100%;
-    border-radius: 2px 2px 0 0;
-    transition: height 0.3s;
-    position: relative;
-  }
+/* outside value colors */
+.val-dt-good  { color: var(–accent1); }
+.val-dt-warn  { color: var(–orange); }
+.val-dt-alert { color: var(–red); }
+.val-ab-good  { color: var(–accent2); }
+.val-ab-warn  { color: var(–orange); }
+.val-ab-alert { color: var(–red); }
 
-  .bar-sf { background: var(--accent1); }
-  .bar-ab { background: var(--accent2); }
+/* ── FOOTER ── */
+footer {
+height: 38px;
+border-top: 1px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 48px;
+flex-shrink: 0;
+background: #ffffff;
+}
 
-  .bar.warn { background: var(--orange); }
-  .bar.alert { background: var(--red); }
+.footer-note {
+font-size: 11px;
+color: var(–dim);
+letter-spacing: 0.8px;
+text-transform: uppercase;
+font-family: ‘DM Mono’, monospace;
+}
 
-  .bar-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1;
-  }
+.threshold-note { display: flex; gap: 20px; }
 
-  .bar-val.sf-val { color: var(--accent1); }
-  .bar-val.ab-val { color: var(--accent2); }
-  .bar-val.warn-val { color: var(--orange); }
-  .bar-val.alert-val { color: var(--red); }
-
-  .bar-label {
-    font-size: 9px;
-    letter-spacing: 0.5px;
-    color: var(--dim);
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    height: 36px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 48px;
-    flex-shrink: 0;
-    background: #ffffff;
-  }
-
-  .footer-note {
-    font-size: 11px;
-    color: var(--dim);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .threshold-note {
-    display: flex;
-    gap: 24px;
-  }
-
-  .thresh {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--dim);
-  }
-
-  .thresh span { margin-right: 6px; }
+.thresh {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+color: var(–dim);
+}
+.thresh span { margin-right: 4px; }
 
 </style>
 </head>
@@ -314,58 +335,47 @@
 <header>
   <div>
     <div class="title">Location Performance Monitor</div>
-    <div class="subtitle">Dropped Trip & Employee Absence — Week of Feb 24, 2026</div>
+    <div class="subtitle">Dropped Trip &amp; Employee Absence — Week of Feb 24, 2026</div>
   </div>
   <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot" style="background:var(--accent1)"></div>
-      Dropped Trip Rate
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:var(--accent2)"></div>
-      Employee Absence Rate
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:var(--orange)"></div>
-      DT Elevated (0.5–1.0%)
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:var(--red)"></div>
-      DT Critical (&gt;1.0%)
-    </div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent1)"></div>DT Good &lt;0.5%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>DT Elevated 0.5–1.0%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>DT Critical &gt;1.0%</div>
+    <div class="legend-item" style="margin-left:12px"><div class="legend-dot" style="background:var(--accent2)"></div>AB Normal &lt;10%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>AB Elevated 10–18%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>AB Critical &gt;18%</div>
   </div>
-  <div class="timestamp">
-    UPDATED<br>FRI 27 FEB · 14:32
-  </div>
+  <div class="timestamp">UPDATED<br>FRI 27 FEB · 14:32</div>
 </header>
 
 <div class="main" id="dashboard"></div>
 
 <footer>
-  <div class="footer-note">DT = Dropped Trip rate · AB = Absence rate · DT bars scaled to max 1.5% · AB bars scaled to max 30%</div>
+  <div class="footer-note">DT = Dropped Trip · AB = Absence · Each bar scaled within its own metric range</div>
   <div class="threshold-note">
-    <div class="thresh"><span style="color:var(--accent1)">■</span> DT Good &lt;0.5%</div>
-    <div class="thresh"><span style="color:var(--orange)">■</span> DT Elevated 0.5–1.0%</div>
-    <div class="thresh"><span style="color:var(--red)">■</span> DT Critical &gt;1.0%</div>
-    <div class="thresh"><span style="color:var(--accent2)">■</span> AB rate (color by severity)</div>
+    <div class="thresh"><span style="color:var(--accent1)">■</span>DT &lt;0.5%</div>
+    <div class="thresh"><span style="color:var(--orange)">■</span>DT 0.5–1.0%</div>
+    <div class="thresh"><span style="color:var(--red)">■</span>DT &gt;1.0%</div>
+    <div class="thresh" style="margin-left:16px"><span style="color:var(--accent2)">■</span>AB &lt;10%</div>
+    <div class="thresh"><span style="color:var(--orange)">■</span>AB 10–18%</div>
+    <div class="thresh"><span style="color:var(--red)">■</span>AB &gt;18%</div>
   </div>
 </footer>
 
 <script>
 const locations = [
-  { name: "North Plaza",  short: "NP" },
-  { name: "East Harbor",  short: "EH" },
-  { name: "West Ridge",   short: "WR" },
-  { name: "Central Hub",  short: "CH" },
-  { name: "South Gate",   short: "SG" },
-  { name: "Riverside",    short: "RV" },
-  { name: "Uptown",       short: "UT" },
+  { name: "North Plaza" },
+  { name: "East Harbor" },
+  { name: "West Ridge"  },
+  { name: "Central Hub" },
+  { name: "South Gate"  },
+  { name: "Riverside"   },
+  { name: "Uptown"      },
 ];
 
-const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+const days = ["MON","TUE","WED","THU","FRI","SAT","SUN"];
 
 // [dropped_trip%, absence%] per location per day
-// DT varies 0.1–1.3%, AB varies 4.8–24.7%
 const data = [
   // North Plaza
   [[0.3,8.2],[0.6,11.4],[0.4,9.7],[0.8,13.1],[0.5,10.2],[1.1,18.6],[0.2,6.3]],
@@ -383,71 +393,48 @@ const data = [
   [[0.8,15.3],[0.6,12.6],[0.5,11.1],[0.7,13.9],[1.0,18.4],[1.2,22.1],[0.7,14.0]],
 ];
 
-// Separate scale maxes for the two very different metrics
-const DT_MAX  = 1.5;   // dropped trip bar scale max %
-const AB_MAX  = 30;    // absence bar scale max %
-const BAR_MAX_PX = 64;
+const DT_MAX = 1.5;
+const AB_MAX = 30;
+// Threshold at which we show value inside vs outside the bar (% of track width)
+const DT_INSIDE_THRESH = 40;
+const AB_INSIDE_THRESH = 30;
 
-// Threshold helpers — DT has 3 levels, AB keeps 2
-function getDTBarClass(val) {
-  if (val > 1.0) return 'alert';
-  if (val >= 0.5) return 'warn';
-  return 'bar-sf';
-}
-function getDTValClass(val) {
-  if (val > 1.0) return 'alert-val';
-  if (val >= 0.5) return 'warn-val';
-  return 'sf-val';
-}
-function getABBarClass(val) {
-  if (val > 18) return 'alert';
-  if (val > 10) return 'warn';
-  return 'bar-ab';
-}
-function getABValClass(val) {
-  if (val > 18) return 'alert-val';
-  if (val > 10) return 'warn-val';
-  return 'ab-val';
-}
+function dtClass(v)  { return v > 1.0 ? 'alert' : v >= 0.5 ? 'warn' : 'good'; }
+function abClass(v)  { return v > 18  ? 'alert' : v > 10   ? 'warn' : 'good'; }
 
 function avgPair(locData) {
   let dt = 0, ab = 0;
-  locData.forEach(([d, a]) => { dt += d; ab += a; });
+  locData.forEach(([d,a]) => { dt += d; ab += a; });
   return [+(dt/7).toFixed(2), +(ab/7).toFixed(1)];
 }
 
 function getBadge(dt, ab) {
-  if (dt > 1.0 || ab > 18) return ['badge-alert', 'Critical'];
-  if (dt >= 0.5 || ab > 10) return ['badge-warn',  'Elevated'];
-  return ['badge-good', 'On Track'];
+  if (dt > 1.0 || ab > 18) return ['badge-alert','Critical'];
+  if (dt >= 0.5 || ab > 10) return ['badge-warn','Elevated'];
+  return ['badge-good','On Track'];
 }
 
-// Compute systemwide average (DT + AB normalized) for best/worst day
-const dayTotals = days.map((_, di) => {
-  let sum = 0, count = 0;
-  data.forEach(locData => {
-    const [dt, ab] = locData[di];
-    sum += (dt / DT_MAX) + (ab / AB_MAX); // normalize before combining
-    count += 2;
-  });
-  return sum / count;
+// Best/worst day by normalized combined score
+const dayTotals = days.map((_,di) => {
+  let s = 0;
+  data.forEach(ld => { const [dt,ab] = ld[di]; s += (dt/DT_MAX) + (ab/AB_MAX); });
+  return s / data.length;
 });
-
 const bestIdx  = dayTotals.indexOf(Math.min(...dayTotals));
 const worstIdx = dayTotals.indexOf(Math.max(...dayTotals));
 
+// ── BUILD DOM ──
 const dash = document.getElementById('dashboard');
 
-// ── LEFT AXIS ──
+// Left axis
 const locAxis = document.createElement('div');
 locAxis.className = 'loc-axis';
-const spacer = document.createElement('div');
-spacer.className = 'day-label-spacer';
-locAxis.appendChild(spacer);
+const sp = document.createElement('div');
+sp.className = 'day-label-spacer';
+locAxis.appendChild(sp);
 
 const locRows = document.createElement('div');
 locRows.className = 'loc-rows';
-
 locations.forEach((loc, li) => {
   const [avgDT, avgAB] = avgPair(data[li]);
   const [badgeClass, badgeText] = getBadge(avgDT, avgAB);
@@ -461,11 +448,10 @@ locations.forEach((loc, li) => {
   `;
   locRows.appendChild(el);
 });
-
 locAxis.appendChild(locRows);
 dash.appendChild(locAxis);
 
-// ── CHART AREA ──
+// Chart area
 const chartArea = document.createElement('div');
 chartArea.className = 'chart-area';
 
@@ -474,11 +460,12 @@ const dayHeaders = document.createElement('div');
 dayHeaders.className = 'day-headers';
 days.forEach((d, i) => {
   const dh = document.createElement('div');
-  let icon = '';
-  if (i === bestIdx)       { icon = ' 😊'; dh.className = 'day-header best-day'; }
-  else if (i === worstIdx) { icon = ' 😟'; dh.className = 'day-header worst-day'; }
-  else                     { dh.className = 'day-header'; }
-  dh.textContent = d + icon;
+  if      (i === bestIdx)  dh.className = 'day-header best-day';
+  else if (i === worstIdx) dh.className = 'day-header worst-day';
+  else                     dh.className = 'day-header';
+  dh.innerHTML = `<span>${d}</span>` +
+    (i === bestIdx  ? `<span class="face">😊</span>` : '') +
+    (i === worstIdx ? `<span class="face">😟</span>` : '');
   dayHeaders.appendChild(dh);
 });
 chartArea.appendChild(dayHeaders);
@@ -493,27 +480,34 @@ locations.forEach((loc, li) => {
 
   days.forEach((_, di) => {
     const [dt, ab] = data[li][di];
-    const dtH = Math.round((dt / DT_MAX) * BAR_MAX_PX);
-    const abH = Math.round((ab / AB_MAX) * BAR_MAX_PX);
-    const dtBarClass = getDTBarClass(dt);
-    const abBarClass = getABBarClass(ab);
-    const dtValClass = getDTValClass(dt);
-    const abValClass = getABValClass(ab);
+    const dtPct = Math.min(100, (dt / DT_MAX) * 100);
+    const abPct = Math.min(100, (ab / AB_MAX) * 100);
+    const dtC = dtClass(dt);
+    const abC = abClass(ab);
+    const dtInside = dtPct >= DT_INSIDE_THRESH;
+    const abInside = abPct >= AB_INSIDE_THRESH;
 
     const cell = document.createElement('div');
     cell.className = 'cell' + (di === bestIdx ? ' best-col' : di === worstIdx ? ' worst-col' : '');
+
     cell.innerHTML = `
-      <div class="bar-pair">
-        <div class="bar-wrap">
-          <div class="bar-val ${dtValClass}">${dt}%</div>
-          <div class="bar ${dtBarClass}" style="height:${dtH}px"></div>
-          <div class="bar-label">DT</div>
+      <div class="hbar-row">
+        <div class="hbar-label">DT</div>
+        <div class="hbar-track">
+          <div class="hbar-fill fill-dt-${dtC}" style="width:${dtPct}%">
+            ${dtInside ? `<span class="hbar-val-inside">${dt}%</span>` : ''}
+          </div>
         </div>
-        <div class="bar-wrap">
-          <div class="bar-val ${abValClass}">${ab}%</div>
-          <div class="bar ${abBarClass}" style="height:${abH}px"></div>
-          <div class="bar-label">AB</div>
+        ${!dtInside ? `<span class="hbar-val-outside val-dt-${dtC}">${dt}%</span>` : ''}
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">AB</div>
+        <div class="hbar-track">
+          <div class="hbar-fill fill-ab-${abC}" style="width:${abPct}%">
+            ${abInside ? `<span class="hbar-val-inside">${ab}%</span>` : ''}
+          </div>
         </div>
+        ${!abInside ? `<span class="hbar-val-outside val-ab-${abC}">${ab}%</span>` : ''}
       </div>
     `;
     row.appendChild(cell);
@@ -525,5 +519,6 @@ locations.forEach((loc, li) => {
 chartArea.appendChild(chartRowsEl);
 dash.appendChild(chartArea);
 </script>
+
 </body>
 </html>
