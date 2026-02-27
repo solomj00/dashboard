@@ -142,6 +142,8 @@
     margin-top: 4px;
     letter-spacing: 0.5px;
   }
+  .dt-avg { color: var(--accent1); }
+  .ab-avg { color: var(--accent2); }
 
   .loc-badge {
     display: inline-block;
@@ -312,12 +314,12 @@
 <header>
   <div>
     <div class="title">Location Performance Monitor</div>
-    <div class="subtitle">Service Failure & Employee Absence — Week of Feb 24, 2026</div>
+    <div class="subtitle">Dropped Trip & Employee Absence — Week of Feb 24, 2026</div>
   </div>
   <div class="legend">
     <div class="legend-item">
       <div class="legend-dot" style="background:var(--accent1)"></div>
-      Service Failure Rate
+      Dropped Trip Rate
     </div>
     <div class="legend-item">
       <div class="legend-dot" style="background:var(--accent2)"></div>
@@ -325,11 +327,11 @@
     </div>
     <div class="legend-item">
       <div class="legend-dot" style="background:var(--orange)"></div>
-      Elevated (&gt;10%)
+      DT Elevated (0.5–1.0%)
     </div>
     <div class="legend-item">
       <div class="legend-dot" style="background:var(--red)"></div>
-      Critical (&gt;18%)
+      DT Critical (&gt;1.0%)
     </div>
   </div>
   <div class="timestamp">
@@ -340,54 +342,92 @@
 <div class="main" id="dashboard"></div>
 
 <footer>
-  <div class="footer-note">All rates shown as percentage of total daily volume · Bars scaled to max 25%</div>
+  <div class="footer-note">DT = Dropped Trip rate · AB = Absence rate · DT bars scaled to max 1.5% · AB bars scaled to max 30%</div>
   <div class="threshold-note">
-    <div class="thresh"><span style="color:var(--accent1)">■</span> SF Normal &lt;10%</div>
-    <div class="thresh"><span style="color:var(--accent2)">■</span> AB Normal &lt;10%</div>
-    <div class="thresh"><span style="color:var(--orange)">■</span> Elevated 10–18%</div>
-    <div class="thresh"><span style="color:var(--red)">■</span> Critical &gt;18%</div>
+    <div class="thresh"><span style="color:var(--accent1)">■</span> DT Good &lt;0.5%</div>
+    <div class="thresh"><span style="color:var(--orange)">■</span> DT Elevated 0.5–1.0%</div>
+    <div class="thresh"><span style="color:var(--red)">■</span> DT Critical &gt;1.0%</div>
+    <div class="thresh"><span style="color:var(--accent2)">■</span> AB rate (color by severity)</div>
   </div>
 </footer>
 
 <script>
 const locations = [
-  { name: "North Plaza",    short: "NP" },
-  { name: "East Harbor",   short: "EH" },
-  { name: "West Ridge",    short: "WR" },
-  { name: "Central Hub",   short: "CH" },
-  { name: "South Gate",    short: "SG" },
-  { name: "Riverside",     short: "RV" },
-  { name: "Uptown",        short: "UT" },
+  { name: "North Plaza",  short: "NP" },
+  { name: "East Harbor",  short: "EH" },
+  { name: "West Ridge",   short: "WR" },
+  { name: "Central Hub",  short: "CH" },
+  { name: "South Gate",   short: "SG" },
+  { name: "Riverside",    short: "RV" },
+  { name: "Uptown",       short: "UT" },
 ];
 
 const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
-// [service_failure%, absence%] per location per day
+// [dropped_trip%, absence%] per location per day
+// DT varies 0.1–1.3%, AB varies 4.8–24.7%
 const data = [
-  // NP
-  [[6,5],[8,7],[5,6],[7,8],[9,6],[12,9],[7,5]],
-  // EH
-  [[11,8],[14,10],[20,12],[18,9],[22,14],[8,7],[6,5]],
-  // WR
-  [[5,4],[6,5],[5,4],[7,6],[6,5],[5,4],[4,3]],
-  // CH
-  [[9,7],[10,8],[8,7],[11,9],[13,10],[15,12],[10,8]],
-  // SG
-  [[7,6],[8,7],[19,15],[21,18],[16,13],[9,8],[7,6]],
-  // RV
-  [[6,5],[7,6],[8,7],[7,6],[6,5],[5,4],[5,4]],
-  // UT
-  [[13,10],[11,9],[10,8],[12,11],[14,12],[17,14],[11,9]],
+  // North Plaza
+  [[0.3,8.2],[0.6,11.4],[0.4,9.7],[0.8,13.1],[0.5,10.2],[1.1,18.6],[0.2,6.3]],
+  // East Harbor
+  [[0.7,14.5],[1.2,20.3],[0.9,17.8],[1.3,24.7],[1.0,19.2],[0.4,9.1],[0.3,7.4]],
+  // West Ridge
+  [[0.1,4.8],[0.2,6.1],[0.1,5.3],[0.3,7.9],[0.2,6.7],[0.1,5.0],[0.1,4.9]],
+  // Central Hub
+  [[0.5,10.6],[0.7,12.8],[0.6,11.3],[0.9,15.4],[0.8,13.7],[1.0,17.2],[0.6,11.0]],
+  // South Gate
+  [[0.4,9.3],[0.5,10.7],[1.1,21.4],[1.3,23.8],[0.9,16.5],[0.6,12.1],[0.4,8.8]],
+  // Riverside
+  [[0.2,7.1],[0.3,8.4],[0.2,6.9],[0.4,9.5],[0.3,8.0],[0.2,6.2],[0.1,5.5]],
+  // Uptown
+  [[0.8,15.3],[0.6,12.6],[0.5,11.1],[0.7,13.9],[1.0,18.4],[1.2,22.1],[0.7,14.0]],
 ];
 
-const MAX_RATE = 25; // scale max
+// Separate scale maxes for the two very different metrics
+const DT_MAX  = 1.5;   // dropped trip bar scale max %
+const AB_MAX  = 30;    // absence bar scale max %
+const BAR_MAX_PX = 64;
 
-// Compute systemwide average (SF + AB) for each day across all locations
+// Threshold helpers — DT has 3 levels, AB keeps 2
+function getDTBarClass(val) {
+  if (val > 1.0) return 'alert';
+  if (val >= 0.5) return 'warn';
+  return 'bar-sf';
+}
+function getDTValClass(val) {
+  if (val > 1.0) return 'alert-val';
+  if (val >= 0.5) return 'warn-val';
+  return 'sf-val';
+}
+function getABBarClass(val) {
+  if (val > 18) return 'alert';
+  if (val > 10) return 'warn';
+  return 'bar-ab';
+}
+function getABValClass(val) {
+  if (val > 18) return 'alert-val';
+  if (val > 10) return 'warn-val';
+  return 'ab-val';
+}
+
+function avgPair(locData) {
+  let dt = 0, ab = 0;
+  locData.forEach(([d, a]) => { dt += d; ab += a; });
+  return [+(dt/7).toFixed(2), +(ab/7).toFixed(1)];
+}
+
+function getBadge(dt, ab) {
+  if (dt > 1.0 || ab > 18) return ['badge-alert', 'Critical'];
+  if (dt >= 0.5 || ab > 10) return ['badge-warn',  'Elevated'];
+  return ['badge-good', 'On Track'];
+}
+
+// Compute systemwide average (DT + AB normalized) for best/worst day
 const dayTotals = days.map((_, di) => {
   let sum = 0, count = 0;
   data.forEach(locData => {
-    const [sf, ab] = locData[di];
-    sum += sf + ab;
+    const [dt, ab] = locData[di];
+    sum += (dt / DT_MAX) + (ab / AB_MAX); // normalize before combining
     count += 2;
   });
   return sum / count;
@@ -395,41 +435,10 @@ const dayTotals = days.map((_, di) => {
 
 const bestIdx  = dayTotals.indexOf(Math.min(...dayTotals));
 const worstIdx = dayTotals.indexOf(Math.max(...dayTotals));
-const BAR_MAX_PX = 64;
-
-function getColor(val, type) {
-  if (val > 18) return 'alert';
-  if (val > 10) return 'warn';
-  return type === 'sf' ? '' : '';
-}
-
-function getColorClass(val) {
-  if (val > 18) return 'alert-val';
-  if (val > 10) return 'warn-val';
-  return '';
-}
-
-function getBarColorClass(val, base) {
-  if (val > 18) return 'alert';
-  if (val > 10) return 'warn';
-  return base;
-}
-
-function avgPair(locData) {
-  let sf = 0, ab = 0;
-  locData.forEach(([s, a]) => { sf += s; ab += a; });
-  return [+(sf/7).toFixed(1), +(ab/7).toFixed(1)];
-}
-
-function getBadge(sf, ab) {
-  if (sf > 14 || ab > 14) return ['badge-alert', 'Critical'];
-  if (sf > 9 || ab > 9)   return ['badge-warn',  'Elevated'];
-  return ['badge-good', 'On Track'];
-}
 
 const dash = document.getElementById('dashboard');
 
-// Left axis
+// ── LEFT AXIS ──
 const locAxis = document.createElement('div');
 locAxis.className = 'loc-axis';
 const spacer = document.createElement('div');
@@ -440,13 +449,14 @@ const locRows = document.createElement('div');
 locRows.className = 'loc-rows';
 
 locations.forEach((loc, li) => {
-  const [avgSF, avgAB] = avgPair(data[li]);
-  const [badgeClass, badgeText] = getBadge(avgSF, avgAB);
+  const [avgDT, avgAB] = avgPair(data[li]);
+  const [badgeClass, badgeText] = getBadge(avgDT, avgAB);
   const el = document.createElement('div');
   el.className = 'loc-label';
   el.innerHTML = `
     <div class="loc-name">${loc.name}</div>
-    <div class="loc-avg">SF avg ${avgSF}% · AB avg ${avgAB}%</div>
+    <div class="loc-avg dt-avg">DT avg ${avgDT}%</div>
+    <div class="loc-avg ab-avg">AB avg ${avgAB}%</div>
     <div class="loc-badge ${badgeClass}">${badgeText}</div>
   `;
   locRows.appendChild(el);
@@ -455,7 +465,7 @@ locations.forEach((loc, li) => {
 locAxis.appendChild(locRows);
 dash.appendChild(locAxis);
 
-// Chart area
+// ── CHART AREA ──
 const chartArea = document.createElement('div');
 chartArea.className = 'chart-area';
 
@@ -465,9 +475,9 @@ dayHeaders.className = 'day-headers';
 days.forEach((d, i) => {
   const dh = document.createElement('div');
   let icon = '';
-  if (i === bestIdx)  { dh.classList.add('best-day');  icon = ' 😊'; }
-  if (i === worstIdx) { dh.classList.add('worst-day'); icon = ' 😟'; }
-  dh.className = 'day-header' + (i === bestIdx ? ' best-day' : i === worstIdx ? ' worst-day' : '');
+  if (i === bestIdx)       { icon = ' 😊'; dh.className = 'day-header best-day'; }
+  else if (i === worstIdx) { icon = ' 😟'; dh.className = 'day-header worst-day'; }
+  else                     { dh.className = 'day-header'; }
   dh.textContent = d + icon;
   dayHeaders.appendChild(dh);
 });
@@ -482,26 +492,26 @@ locations.forEach((loc, li) => {
   row.className = 'chart-row';
 
   days.forEach((_, di) => {
-    const [sf, ab] = data[li][di];
-    const sfH = Math.round((sf / MAX_RATE) * BAR_MAX_PX);
-    const abH = Math.round((ab / MAX_RATE) * BAR_MAX_PX);
-    const sfBarClass = getBarColorClass(sf, 'bar-sf');
-    const abBarClass = getBarColorClass(ab, 'bar-ab');
-    const sfValClass = sf > 18 ? 'alert-val' : sf > 10 ? 'warn-val' : 'sf-val';
-    const abValClass = ab > 18 ? 'alert-val' : ab > 10 ? 'warn-val' : 'ab-val';
+    const [dt, ab] = data[li][di];
+    const dtH = Math.round((dt / DT_MAX) * BAR_MAX_PX);
+    const abH = Math.round((ab / AB_MAX) * BAR_MAX_PX);
+    const dtBarClass = getDTBarClass(dt);
+    const abBarClass = getABBarClass(ab);
+    const dtValClass = getDTValClass(dt);
+    const abValClass = getABValClass(ab);
 
     const cell = document.createElement('div');
     cell.className = 'cell' + (di === bestIdx ? ' best-col' : di === worstIdx ? ' worst-col' : '');
     cell.innerHTML = `
       <div class="bar-pair">
         <div class="bar-wrap">
-          <div class="bar-val ${sfValClass}">${sf}%</div>
-          <div class="bar bar-sf ${sfBarClass}" style="height:${sfH}px"></div>
-          <div class="bar-label">SF</div>
+          <div class="bar-val ${dtValClass}">${dt}%</div>
+          <div class="bar ${dtBarClass}" style="height:${dtH}px"></div>
+          <div class="bar-label">DT</div>
         </div>
         <div class="bar-wrap">
           <div class="bar-val ${abValClass}">${ab}%</div>
-          <div class="bar bar-ab ${abBarClass}" style="height:${abH}px"></div>
+          <div class="bar ${abBarClass}" style="height:${abH}px"></div>
           <div class="bar-label">AB</div>
         </div>
       </div>
