@@ -7,15 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0c10;
-    --panel: #111318;
-    --border: #1e2230;
-    --accent1: #e8f04a; /* yellow-green — service failure */
-    --accent2: #4af0c8; /* teal — absence */
-    --red: #ff4c4c;
-    --orange: #ff9340;
-    --dim: #3a3f52;
-    --text: #dde3f5;
+    --bg: #f4f6fb;
+    --panel: #ffffff;
+    --border: #dde2ef;
+    --accent1: #2563eb; /* blue — service failure */
+    --accent2: #059669; /* green — absence */
+    --red: #dc2626;
+    --orange: #ea7c1e;
+    --dim: #a0a9c2;
+    --text: #1e2640;
     --muted: #6b7494;
   }
 
@@ -40,13 +40,15 @@
     padding: 22px 48px 16px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
 
   .title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 42px;
     letter-spacing: 3px;
-    color: #fff;
+    color: var(--text);
   }
 
   .subtitle {
@@ -100,6 +102,7 @@
     flex-direction: column;
     padding: 0 0 0 24px;
     border-right: 1px solid var(--border);
+    background: #ffffff;
   }
 
   .day-label-spacer {
@@ -128,7 +131,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 22px;
     letter-spacing: 1.5px;
-    color: #fff;
+    color: var(--text);
     line-height: 1;
   }
 
@@ -151,9 +154,9 @@
     text-transform: uppercase;
   }
 
-  .badge-good { background: rgba(74,240,200,0.12); color: var(--accent2); }
-  .badge-warn { background: rgba(255,147,64,0.12); color: var(--orange); }
-  .badge-alert { background: rgba(255,76,76,0.12); color: var(--red); }
+  .badge-good { background: rgba(5,150,105,0.10); color: var(--accent2); }
+  .badge-warn { background: rgba(234,124,30,0.12); color: var(--orange); }
+  .badge-alert { background: rgba(220,38,38,0.10); color: var(--red); }
 
   /* ── CHART AREA ── */
   .chart-area {
@@ -184,6 +187,8 @@
 
   .day-header:last-child { border-right: none; }
   .day-header.today { color: var(--accent1); }
+  .day-header.best-day  { color: var(--accent2); }
+  .day-header.worst-day { color: var(--red); }
 
   /* ── LOC ROWS ── */
   .chart-rows {
@@ -214,7 +219,8 @@
   }
 
   .cell:last-child { border-right: none; }
-  .cell.today-col { background: rgba(232,240,74,0.025); }
+  .cell.best-col  { background: rgba(5,150,105,0.05); }
+  .cell.worst-col { background: rgba(220,38,38,0.05); }
 
   /* ── BAR PAIR ── */
   .bar-pair {
@@ -275,6 +281,7 @@
     justify-content: space-between;
     padding: 0 48px;
     flex-shrink: 0;
+    background: #ffffff;
   }
 
   .footer-note {
@@ -354,7 +361,6 @@ const locations = [
 ];
 
 const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-const todayIdx = 4; // Friday
 
 // [service_failure%, absence%] per location per day
 const data = [
@@ -375,6 +381,20 @@ const data = [
 ];
 
 const MAX_RATE = 25; // scale max
+
+// Compute systemwide average (SF + AB) for each day across all locations
+const dayTotals = days.map((_, di) => {
+  let sum = 0, count = 0;
+  data.forEach(locData => {
+    const [sf, ab] = locData[di];
+    sum += sf + ab;
+    count += 2;
+  });
+  return sum / count;
+});
+
+const bestIdx  = dayTotals.indexOf(Math.min(...dayTotals));
+const worstIdx = dayTotals.indexOf(Math.max(...dayTotals));
 const BAR_MAX_PX = 64;
 
 function getColor(val, type) {
@@ -444,8 +464,11 @@ const dayHeaders = document.createElement('div');
 dayHeaders.className = 'day-headers';
 days.forEach((d, i) => {
   const dh = document.createElement('div');
-  dh.className = 'day-header' + (i === todayIdx ? ' today' : '');
-  dh.textContent = d + (i === todayIdx ? ' ★' : '');
+  let icon = '';
+  if (i === bestIdx)  { dh.classList.add('best-day');  icon = ' 😊'; }
+  if (i === worstIdx) { dh.classList.add('worst-day'); icon = ' 😟'; }
+  dh.className = 'day-header' + (i === bestIdx ? ' best-day' : i === worstIdx ? ' worst-day' : '');
+  dh.textContent = d + icon;
   dayHeaders.appendChild(dh);
 });
 chartArea.appendChild(dayHeaders);
@@ -468,7 +491,7 @@ locations.forEach((loc, li) => {
     const abValClass = ab > 18 ? 'alert-val' : ab > 10 ? 'warn-val' : 'ab-val';
 
     const cell = document.createElement('div');
-    cell.className = 'cell' + (di === todayIdx ? ' today-col' : '');
+    cell.className = 'cell' + (di === bestIdx ? ' best-col' : di === worstIdx ? ' worst-col' : '');
     cell.innerHTML = `
       <div class="bar-pair">
         <div class="bar-wrap">
