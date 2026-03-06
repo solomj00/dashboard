@@ -1,65 +1,141 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Location Performance Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500;600&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { width:1920px; height:1080px; overflow:hidden; display:flex; flex-direction:column; background:#f0f3fa; color:#1e2640; font-family:'DM Sans',sans-serif; }
-header { height:88px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 48px; background:#fff; border-bottom:2px solid #dde2ef; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-.title { font-family:'Bebas Neue',sans-serif; font-size:40px; letter-spacing:3px; line-height:1; }
-.subtitle { font-size:12px; color:#6b7494; letter-spacing:2px; text-transform:uppercase; margin-top:4px; }
-.legend { display:flex; gap:18px; align-items:center; }
-.leg { display:flex; align-items:center; gap:7px; font-size:11px; color:#6b7494; text-transform:uppercase; letter-spacing:0.8px; }
-.leg-dot { width:12px; height:12px; border-radius:2px; flex-shrink:0; }
-.leg-div { width:1px; height:20px; background:#dde2ef; margin:0 4px; }
-.ts { font-family:'DM Mono',monospace; font-size:12px; color:#6b7494; text-align:right; line-height:1.6; }
-.main { flex:1; display:grid; grid-template-columns:230px 1fr; overflow:hidden; }
-.loc-axis { display:flex; flex-direction:column; background:#fff; border-right:2px solid #dde2ef; box-shadow:2px 0 6px rgba(0,0,0,0.04); }
-.ax-spacer { height:46px; flex-shrink:0; border-bottom:1px solid #dde2ef; }
+
+body {
+width:1920px; height:1080px; overflow:hidden;
+display:flex; flex-direction:column;
+background:#edf0f7; color:#0d1b2e;
+font-family:‘DM Sans’,sans-serif;
+}
+
+/* ── HEADER ── */
+header {
+height:80px; flex-shrink:0;
+display:flex; align-items:center; justify-content:space-between;
+padding:0 36px;
+background:#003DA5; /* MBTA blue */
+border-bottom:4px solid #0056c8;
+}
+.title { font-family:‘Bebas Neue’,sans-serif; font-size:44px; letter-spacing:3px; line-height:1; color:#fff; }
+.subtitle { font-size:13px; color:rgba(255,255,255,0.7); letter-spacing:2px; text-transform:uppercase; margin-top:3px; }
+
+.legend { display:flex; gap:16px; align-items:center; }
+.leg { display:flex; align-items:center; gap:7px; font-size:12px; color:rgba(255,255,255,0.85); text-transform:uppercase; letter-spacing:0.8px; font-weight:600; }
+.leg-dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+.leg-div { width:1px; height:22px; background:rgba(255,255,255,0.25); margin:0 6px; }
+
+.ts { font-family:‘DM Mono’,monospace; font-size:13px; color:rgba(255,255,255,0.7); text-align:right; line-height:1.7; }
+
+/* ── LAYOUT ── */
+.main { flex:1; display:grid; grid-template-columns:210px 1fr; overflow:hidden; }
+
+/* ── LEFT AXIS ── */
+.loc-axis {
+display:flex; flex-direction:column;
+background:#fff; border-right:3px solid #c8d0e0;
+}
+.ax-spacer { height:42px; flex-shrink:0; border-bottom:1px solid #c8d0e0; background:#f4f6fb; }
 .loc-rows { flex:1; display:flex; flex-direction:column; }
-.loc-label { flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 14px 0 20px; border-bottom:1px solid #dde2ef; }
+.loc-label {
+flex:1; display:flex; flex-direction:column; justify-content:center;
+padding:4px 10px 4px 16px; border-bottom:1px solid #c8d0e0;
+}
 .loc-label:last-child { border-bottom:none; }
-.loc-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1.5px; line-height:1; }
-.loc-stat { font-family:'DM Mono',monospace; font-size:11px; margin-top:3px; }
-.loc-badge { display:inline-block; font-size:9px; font-family:'DM Mono',monospace; letter-spacing:1px; padding:2px 5px; border-radius:2px; margin-top:4px; text-transform:uppercase; width:fit-content; }
-.chart-area { display:flex; flex-direction:column; padding:0 20px; }
-.day-headers { display:grid; grid-template-columns:repeat(7,1fr); height:46px; flex-shrink:0; }
-.day-hdr { display:flex; align-items:center; justify-content:center; gap:6px; font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:#6b7494; border-bottom:1px solid #dde2ef; border-right:1px solid #dde2ef; }
+.loc-name { font-family:‘Bebas Neue’,sans-serif; font-size:26px; letter-spacing:1.5px; line-height:1; color:#0d1b2e; }
+.loc-stat { font-family:‘DM Mono’,monospace; font-size:13px; margin-top:2px; font-weight:500; }
+.loc-badge {
+display:inline-block; font-size:10px; font-family:‘DM Mono’,monospace;
+letter-spacing:1px; padding:2px 6px; border-radius:3px; margin-top:3px;
+text-transform:uppercase; font-weight:600; width:fit-content;
+}
+
+/* ── CHART ── */
+.chart-area { display:flex; flex-direction:column; padding:0 14px; }
+
+.day-headers { display:grid; grid-template-columns:repeat(7,1fr); height:42px; flex-shrink:0; background:#f4f6fb; }
+.day-hdr {
+display:flex; align-items:center; justify-content:center; gap:5px;
+font-family:‘Bebas Neue’,sans-serif; font-size:22px; letter-spacing:2px;
+color:#5a6480; border-bottom:1px solid #c8d0e0; border-right:1px solid #c8d0e0;
+}
 .day-hdr:last-child { border-right:none; }
-.face { font-size:18px; line-height:1; }
+.face { font-size:20px; line-height:1; }
+
 .chart-rows { flex:1; display:flex; flex-direction:column; }
-.chart-row { flex:1; display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid #dde2ef; }
+.chart-row { flex:1; display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid #c8d0e0; }
 .chart-row:last-child { border-bottom:none; }
-.cell { display:flex; border-right:1px solid #dde2ef; overflow:hidden; }
+
+/* ── CELL ── */
+.cell { display:flex; border-right:1px solid #c8d0e0; overflow:hidden; }
 .cell:last-child { border-right:none; }
-.dt-panel { width:36%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:8px 6px; border-right:1px solid rgba(0,0,0,0.07); position:relative; }
-.dt-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; opacity:0.6; line-height:1; }
-.dt-val { font-family:'DM Mono',monospace; font-size:16px; font-weight:500; line-height:1; }
-.dt-near { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(0,0,0,0.18); border-radius:0 0 0 0; }
-.ab-panel { flex:1; display:flex; flex-direction:column; justify-content:center; gap:5px; padding:10px 14px 10px 12px; }
-.ab-row { display:flex; align-items:center; gap:8px; }
-.ab-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.5px; color:#a0a9c2; text-transform:uppercase; width:16px; flex-shrink:0; text-align:right; }
-.ab-track { flex:1; height:26px; background:#e4e8f2; border-radius:4px; position:relative; overflow:hidden; }
+
+/* DT panel — RAG background, left 34% */
+.dt-panel {
+width:34%; display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+gap:2px; padding:6px 4px;
+border-right:2px solid rgba(0,0,0,0.08);
+position:relative;
+}
+.dt-lbl {
+font-family:‘DM Mono’,monospace; font-size:11px; letter-spacing:1.5px;
+text-transform:uppercase; opacity:0.6; line-height:1; font-weight:600;
+}
+.dt-val {
+font-family:‘DM Mono’,monospace; font-size:28px; font-weight:600;
+line-height:1; letter-spacing:-0.5px;
+}
+/* near-threshold stripe */
+.dt-near { position:absolute; bottom:0; left:0; right:0; height:4px; background:rgba(0,0,0,0.2); }
+
+/* AB panel — right 66% */
+.ab-panel {
+flex:1; display:flex; flex-direction:column;
+justify-content:center; gap:4px; padding:8px 12px 8px 10px;
+}
+.ab-row { display:flex; align-items:center; gap:7px; }
+.ab-lbl {
+font-family:‘DM Mono’,monospace; font-size:11px; letter-spacing:1px;
+color:#8892aa; text-transform:uppercase; width:18px; flex-shrink:0;
+text-align:right; font-weight:600;
+}
+.ab-track { flex:1; height:32px; background:#dde2ef; border-radius:4px; position:relative; overflow:hidden; }
 .ab-fill { position:absolute; left:0; top:0; height:100%; border-radius:4px; min-width:4px; }
-.ab-val { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; white-space:nowrap; flex-shrink:0; width:44px; padding-left:6px; }
-footer { height:38px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 48px; background:#fff; border-top:1px solid #dde2ef; }
-.fn { font-family:'DM Mono',monospace; font-size:11px; color:#a0a9c2; text-transform:uppercase; letter-spacing:0.8px; }
-.thresh-row { display:flex; gap:20px; }
-.thr { font-family:'DM Mono',monospace; font-size:11px; color:#a0a9c2; }
+.ab-val {
+font-family:‘DM Mono’,monospace; font-size:16px; font-weight:600;
+white-space:nowrap; flex-shrink:0; width:52px; padding-left:6px;
+}
+
+/* ── FOOTER ── */
+footer {
+height:36px; flex-shrink:0;
+display:flex; align-items:center; justify-content:space-between;
+padding:0 36px; background:#003DA5; border-top:2px solid #0056c8;
+}
+.fn { font-family:‘DM Mono’,monospace; font-size:11px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.8px; }
+.thresh-row { display:flex; gap:18px; }
+.thr { font-family:‘DM Mono’,monospace; font-size:11px; color:rgba(255,255,255,0.65); }
 </style>
+
 </head>
 <body>
+
 <header>
   <div>
     <div class="title">Location Performance Monitor</div>
     <div class="subtitle">Dropped Trip &amp; Employee Absence &mdash; Week of Feb 24, 2026</div>
   </div>
   <div class="legend">
-    <div class="leg"><div class="leg-dot" style="background:#d1fae5;border:1px solid #6ee7b7"></div>DT Good &lt;0.5%</div>
-    <div class="leg"><div class="leg-dot" style="background:#ffedd5;border:1px solid #fdba74"></div>DT Elevated 0.5&ndash;1.0%</div>
-    <div class="leg"><div class="leg-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div>DT Critical &gt;1.0%</div>
+    <div class="leg"><div class="leg-dot" style="background:#d1fae5;border:1.5px solid #34d399"></div>DT Good &lt;0.5%</div>
+    <div class="leg"><div class="leg-dot" style="background:#ffedd5;border:1.5px solid #fb923c"></div>DT Elevated 0.5&ndash;1.0%</div>
+    <div class="leg"><div class="leg-dot" style="background:#fee2e2;border:1.5px solid #f87171"></div>DT Critical &gt;1.0%</div>
     <div class="leg-div"></div>
     <div class="leg"><div class="leg-dot" style="background:#059669"></div>AB Normal &lt;10%</div>
     <div class="leg"><div class="leg-dot" style="background:#ea7c1e"></div>AB Elevated 10&ndash;18%</div>
@@ -67,20 +143,23 @@ footer { height:38px; flex-shrink:0; display:flex; align-items:center; justify-c
   </div>
   <div class="ts">UPDATED<br>FRI 27 FEB &middot; 14:32</div>
 </header>
+
 <div class="main" id="dashboard"></div>
+
 <footer>
-  <div class="fn">Left panel = DT status (RAG) &middot; Right panel = AB bar, scaled 0&ndash;30% across all locations &amp; days</div>
+  <div class="fn">Left panel = Dropped Trip RAG status &middot; Right panel = Absence bar scaled 0&ndash;30% globally</div>
   <div class="thresh-row">
-    <div class="thr"><span style="color:#059669">&#9632;</span> DT &lt;0.5%</div>
-    <div class="thr"><span style="color:#ea7c1e">&#9632;</span> DT 0.5&ndash;1.0%</div>
-    <div class="thr"><span style="color:#dc2626">&#9632;</span> DT &gt;1.0%</div>
-    <div class="thr" style="margin-left:16px"><span style="color:#059669">&#9632;</span> AB &lt;10%</div>
+    <div class="thr"><span style="color:#6ee7b7">&#9632;</span> DT &lt;0.5%</div>
+    <div class="thr"><span style="color:#fb923c">&#9632;</span> DT 0.5&ndash;1.0%</div>
+    <div class="thr"><span style="color:#f87171">&#9632;</span> DT &gt;1.0%</div>
+    <div class="thr" style="margin-left:12px"><span style="color:#34d399">&#9632;</span> AB &lt;10%</div>
     <div class="thr"><span style="color:#ea7c1e">&#9632;</span> AB 10&ndash;18%</div>
     <div class="thr"><span style="color:#dc2626">&#9632;</span> AB &gt;18%</div>
   </div>
 </footer>
+
 <script>
-var locations=["North Plaza","East Harbor","West Ridge","Central Hub","South Gate","Riverside","Uptown"];
+var locations=["Charlestown","Cabot","Southampton","Bennett","Arborway","Lynn","Quincy"];
 var days=["MON","TUE","WED","THU","FRI","SAT","SUN"];
 var data=[
   [[0.3,8.2],[0.6,11.4],[0.4,9.7],[0.8,13.1],[0.5,10.2],[1.1,18.6],[0.2,6.3]],
@@ -95,21 +174,26 @@ var AB_SCALE=30;
 
 function dtRAG(v){
   var near=(Math.abs(v-0.5)<0.08)||(Math.abs(v-1.0)<0.08);
-  if(v>1.0) return {bg:"#fee2e2",text:"#b91c1c",near:near};
+  if(v>1.0)  return {bg:"#fee2e2",text:"#b91c1c",near:near};
   if(v>=0.5) return {bg:"#ffedd5",text:"#c2410c",near:near};
-  return {bg:"#d1fae5",text:"#065f46",near:near};
+  return             {bg:"#d1fae5",text:"#065f46",near:near};
 }
 function abColor(v){ if(v>18) return "#dc2626"; if(v>10) return "#ea7c1e"; return "#059669"; }
-function weekAvg(li){ var dt=0,ab=0; data[li].forEach(function(r){dt+=r[0];ab+=r[1];}); return [(dt/7).toFixed(2),(ab/7).toFixed(1)]; }
+
+function weekAvg(li){
+  var dt=0,ab=0;
+  data[li].forEach(function(r){dt+=r[0];ab+=r[1];});
+  return [(dt/7).toFixed(2),(ab/7).toFixed(1)];
+}
 function badgeStyle(dt,ab){
-  if(dt>1.0||ab>18) return {bg:"rgba(220,38,38,0.10)",col:"#dc2626",label:"Critical"};
-  if(dt>=0.5||ab>10) return {bg:"rgba(234,124,30,0.12)",col:"#ea7c1e",label:"Elevated"};
-  return {bg:"rgba(5,150,105,0.10)",col:"#059669",label:"On Track"};
+  if(dt>1.0||ab>18)  return {bg:"rgba(220,38,38,0.12)", col:"#b91c1c",label:"Critical"};
+  if(dt>=0.5||ab>10) return {bg:"rgba(234,124,30,0.14)",col:"#c2410c",label:"Elevated"};
+  return                    {bg:"rgba(5,150,105,0.12)",  col:"#065f46",label:"On Track"};
 }
 
 var dayScore=days.map(function(_,di){
   var s=0;
-  data.forEach(function(row){ s+=row[di][0]/1.5+row[di][1]/AB_SCALE; });
+  data.forEach(function(row){s+=row[di][0]/1.5+row[di][1]/AB_SCALE;});
   return s/locations.length;
 });
 var bestIdx=dayScore.indexOf(Math.min.apply(null,dayScore));
@@ -122,10 +206,12 @@ var axis=document.createElement("div"); axis.className="loc-axis";
 axis.innerHTML='<div class="ax-spacer"></div>';
 var locRows=document.createElement("div"); locRows.className="loc-rows";
 locations.forEach(function(name,li){
-  var avg=weekAvg(li); var avgDT=parseFloat(avg[0]); var avgAB=parseFloat(avg[1]);
+  var avg=weekAvg(li);
+  var avgDT=parseFloat(avg[0]); var avgAB=parseFloat(avg[1]);
   var b=badgeStyle(avgDT,avgAB); var rag=dtRAG(avgDT);
   var el=document.createElement("div"); el.className="loc-label";
-  el.innerHTML='<div class="loc-name">'+name+'</div>'+
+  el.innerHTML=
+    '<div class="loc-name">'+name+'</div>'+
     '<div class="loc-stat" style="color:'+rag.text+'">DT avg '+avg[0]+'%</div>'+
     '<div class="loc-stat" style="color:#059669">AB avg '+avg[1]+'%</div>'+
     '<div class="loc-badge" style="background:'+b.bg+';color:'+b.col+'">'+b.label+'</div>';
@@ -140,7 +226,7 @@ var chart=document.createElement("div"); chart.className="chart-area";
 var hdrs=document.createElement("div"); hdrs.className="day-headers";
 days.forEach(function(d,i){
   var dh=document.createElement("div"); dh.className="day-hdr";
-  var col="#6b7494"; var face="";
+  var col="#5a6480"; var face="";
   if(i===bestIdx){col="#059669";face='<span class="face">&#128522;</span>';}
   if(i===worstIdx){col="#dc2626";face='<span class="face">&#128543;</span>';}
   dh.style.color=col;
@@ -182,5 +268,6 @@ locations.forEach(function(_,li){
 });
 chart.appendChild(chartRows); dash.appendChild(chart);
 </script>
+
 </body>
 </html>
